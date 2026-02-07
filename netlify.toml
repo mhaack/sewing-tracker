@@ -13,6 +13,3 @@
   to = "/index.html"
   status = 200
 
-# Environment variables (set these in Netlify UI)
-# SUPABASE_URL=your-supabase-url
-# SUPABASE_ANON_KEY=your-supabase-anon-key
