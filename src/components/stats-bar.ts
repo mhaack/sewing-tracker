@@ -13,45 +13,68 @@ export class StatsBar extends LitElement {
 
   @property({ type: Boolean }) compact = false;
 
+
   static styles = css`
     .stats-bar {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 1.5rem;
-      padding: 1.25rem 1.5rem;
-      background: linear-gradient(135deg, var(--cream-dark), var(--sand));
+      gap: 2rem;
+      padding: 2rem 2.5rem;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.4)),
+        linear-gradient(135deg, var(--cream-dark), var(--sand));
       border-radius: var(--radius);
-      box-shadow: inset 0 2px 8px var(--shadow);
-      transition: padding 0.3s ease, gap 0.3s ease;
+      box-shadow:
+        0 8px 32px var(--shadow-strong),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      transition: all 0.15s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Fabric texture overlay */
+    .stats-bar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background:
+        repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(193, 123, 99, 0.03) 2px, rgba(193, 123, 99, 0.03) 4px);
+      pointer-events: none;
+      transition: opacity 0.15s ease;
     }
 
     .stats-bar.compact {
-      padding: 0.5rem 1.5rem;
-      gap: 1rem;
+      padding: 0.4rem 1.5rem;
+      gap: 1.5rem;
+      border-radius: var(--radius-sm);
+      box-shadow: 0 2px 8px var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.6);
     }
+
+    .stats-bar.compact::before {
+      opacity: 0;
+    }
+
 
     .stat {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.2rem;
-      animation: statReveal 0.6s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+      gap: 0.4rem;
+      position: relative;
+      z-index: 1;
+      transition: gap 0.15s ease;
     }
 
-    .stat:nth-child(1) { animation-delay: 0.1s; }
-    .stat:nth-child(2) { animation-delay: 0.2s; }
-    .stat:nth-child(3) { animation-delay: 0.3s; }
-    .stat:nth-child(4) { animation-delay: 0.4s; }
-
-    @keyframes statReveal {
-      from {
-        opacity: 0;
-        transform: translateY(8px) scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+    .stats-bar.compact .stat {
+      gap: 0;
+      flex-direction: row;
+      justify-content: center;
     }
 
     .stat-value-row {
@@ -62,45 +85,65 @@ export class StatsBar extends LitElement {
 
     .stat-icon {
       color: var(--terracotta);
-      opacity: 0.5;
-      transition: opacity 0.3s ease;
+      opacity: 0.7;
+      transition: all 0.15s ease;
       flex-shrink: 0;
+      filter: drop-shadow(0 2px 4px rgba(193, 123, 99, 0.2));
+    }
+
+    .stat:hover .stat-icon {
+      opacity: 1;
+      transform: scale(1.1) rotate(5deg);
     }
 
     .stat-icon svg {
-      width: 18px;
-      height: 18px;
+      width: 24px;
+      height: 24px;
       display: block;
     }
 
-    .compact .stat-icon {
+    .stats-bar.compact .stat-icon {
       display: none;
     }
 
+
     .stat-value {
       font-family: var(--font-display);
-      font-size: 1.75rem;
-      font-weight: 500;
-      color: var(--terracotta);
-      transition: font-size 0.3s ease;
+      font-size: 2.75rem;
+      font-weight: 600;
+      color: var(--terracotta-rich);
+      transition: all 0.15s ease;
       white-space: nowrap;
+      text-shadow: 0 2px 4px rgba(193, 123, 99, 0.15);
+      line-height: 1;
     }
 
-    .compact .stat-value {
-      font-size: 1.25rem;
+    .stat:hover .stat-value {
+      transform: scale(1.05);
+      color: var(--terracotta);
+    }
+
+    .stats-bar.compact .stat-value {
+      font-size: 1.1rem;
+      font-weight: 500;
+      text-shadow: none;
+    }
+
+    .stats-bar.compact .stat:hover .stat-value {
+      transform: none;
     }
 
     .stat-label {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--charcoal-light);
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-weight: 400;
-      transition: font-size 0.3s ease;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+      transition: all 0.15s ease;
     }
 
-    .compact .stat-label {
-      font-size: 0.65rem;
+    .stats-bar.compact .stat-label {
+      display: none;
     }
 
     @media (max-width: 768px) {
@@ -112,12 +155,8 @@ export class StatsBar extends LitElement {
 
       .stats-bar.compact {
         grid-template-columns: repeat(4, 1fr);
-        padding: 0.5rem 0.75rem;
-        gap: 0.5rem;
-      }
-
-      .compact .stat-label {
-        font-size: 0.6rem;
+        padding: 0.4rem 1rem;
+        gap: 0.75rem;
       }
     }
 

@@ -17,19 +17,21 @@ export class ProjectList extends LitElement {
       .projects-grid {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 1.5rem;
+        gap: 2.5rem;
         align-items: start;
       }
 
       @media (min-width: 768px) {
         .projects-grid {
           grid-template-columns: repeat(2, 1fr);
+          gap: 2rem;
         }
       }
 
       @media (min-width: 1200px) {
         .projects-grid {
           grid-template-columns: repeat(3, 1fr);
+          gap: 2.5rem;
         }
       }
 
@@ -221,17 +223,19 @@ export class ProjectList extends LitElement {
 
       .empty-state h3 {
         font-family: var(--font-display);
-        font-size: 2rem;
-        font-weight: 500;
+        font-size: 2.5rem;
+        font-weight: 600;
         color: var(--charcoal);
-        margin-bottom: 0.75rem;
+        margin-bottom: 1rem;
+        letter-spacing: 0.02em;
       }
 
       .empty-state p {
-        font-size: 1rem;
-        max-width: 400px;
+        font-size: 1.1rem;
+        max-width: 450px;
         margin: 0 auto;
         line-height: 1.7;
+        color: var(--charcoal-light);
       }
 
       /* ── Responsive: list view ── */

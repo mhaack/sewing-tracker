@@ -14,14 +14,35 @@ export class AppHeader extends LitElement {
   };
 
   @state() private scrolled = false;
+  private _ticking = false;
+  private _preventToggle = false;
 
-  // Hysteresis: shrink at 80px, expand back only at 20px to prevent flickering
   private _scrollHandler = () => {
-    const y = window.scrollY;
-    if (!this.scrolled && y > 80) {
-      this.scrolled = true;
-    } else if (this.scrolled && y < 20) {
-      this.scrolled = false;
+    if (!this._ticking) {
+      window.requestAnimationFrame(() => {
+        if (this._preventToggle) {
+          this._ticking = false;
+          return;
+        }
+
+        const y = window.scrollY;
+
+        // Very wide hysteresis with debounce
+        if (!this.scrolled && y > 200) {
+          this.scrolled = true;
+          // Prevent immediate toggling back
+          this._preventToggle = true;
+          setTimeout(() => { this._preventToggle = false; }, 300);
+        } else if (this.scrolled && y < 50) {
+          this.scrolled = false;
+          // Prevent immediate toggling back
+          this._preventToggle = true;
+          setTimeout(() => { this._preventToggle = false; }, 300);
+        }
+
+        this._ticking = false;
+      });
+      this._ticking = true;
     }
   };
 
@@ -43,22 +64,24 @@ export class AppHeader extends LitElement {
       top: 0;
       z-index: 100;
       box-shadow: 0 4px 20px var(--shadow);
-      transition: box-shadow 0.3s ease;
+      transition: box-shadow 0.15s ease;
+      min-height: 70px;
     }
 
     .header.scrolled {
-      box-shadow: 0 2px 12px var(--shadow-strong);
+      box-shadow: 0 2px 8px var(--shadow-strong);
     }
 
     .header-content {
       max-width: 1400px;
       margin: 0 auto;
       padding: 2rem 2rem 1.5rem;
-      transition: padding 0.3s ease;
+      transition: padding 0.15s ease;
+      position: relative;
     }
 
     .header.scrolled .header-content {
-      padding: 0.75rem 2rem;
+      padding: 0.5rem 2rem;
     }
 
     .header-top {
@@ -66,89 +89,117 @@ export class AppHeader extends LitElement {
       justify-content: space-between;
       align-items: center;
       margin-bottom: 0.5rem;
-      transition: margin 0.3s ease;
-    }
-
-    .header.scrolled .header-top {
-      margin-bottom: 0.25rem;
     }
 
     .logo {
       font-family: var(--font-display);
-      font-size: 3rem;
-      font-weight: 400;
-      letter-spacing: 0.02em;
+      font-size: 4.5rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
       color: var(--charcoal);
       margin: 0;
-      transition: font-size 0.3s ease;
+      text-shadow: 0 2px 4px var(--shadow);
+      transition: font-size 0.15s ease;
     }
 
     .header.scrolled .logo {
-      font-size: 1.75rem;
+      font-size: 1.5rem;
     }
 
     .tagline {
-      font-size: 0.95rem;
-      color: var(--charcoal-light);
-      font-weight: 300;
-      letter-spacing: 0.03em;
+      font-family: var(--font-accent);
+      font-size: 1.25rem;
+      color: var(--terracotta);
+      font-weight: 400;
+      letter-spacing: 0.02em;
       margin-bottom: 0;
-      max-height: 2rem;
-      opacity: 1;
-      overflow: hidden;
-      transition: opacity 0.2s ease, max-height 0.3s ease, margin 0.3s ease;
+      transition: opacity 0.15s ease;
     }
 
     .header.scrolled .tagline {
-      opacity: 0;
-      max-height: 0;
-      margin-bottom: 0;
-      pointer-events: none;
+      display: none;
     }
 
     .stitch-decoration {
-      height: 16px;
+      height: 24px;
       display: flex;
       align-items: center;
-      margin-bottom: 1.25rem;
-      max-height: 16px;
-      opacity: 1;
-      overflow: hidden;
-      transition: opacity 0.2s ease, max-height 0.3s ease, margin 0.3s ease;
+      gap: 12px;
+      margin-bottom: 1.5rem;
+      transition: opacity 0.15s ease;
     }
 
     .header.scrolled .stitch-decoration {
-      opacity: 0;
-      max-height: 0;
-      margin-bottom: 0;
+      display: none;
     }
 
-    .stitch-decoration::before {
+    .stats-wrapper {
+      transition: opacity 0.15s ease;
+    }
+
+    .header.scrolled .stats-wrapper {
+      display: none;
+    }
+
+    .stitch-decoration::before,
+    .stitch-decoration::after {
       content: '';
-      width: 60px;
-      border-top: 1.5px dashed var(--terracotta);
-      opacity: 0.35;
+      width: 80px;
+      border-top: 2px dashed var(--terracotta);
+      opacity: 0.4;
+    }
+
+    /* Decorative thread spool */
+    .stitch-decoration svg {
+      width: 20px;
+      height: 20px;
+      color: var(--terracotta);
+      opacity: 0.6;
     }
 
     .btn-new-project {
       background: var(--terracotta);
       color: white;
-      border: none;
-      padding: 0.75rem 1.75rem;
-      border-radius: var(--radius-sm);
+      border: 3px solid var(--terracotta-rich);
+      padding: 0.9rem 2.25rem;
+      border-radius: 50px;
       font-family: var(--font-body);
-      font-size: 0.95rem;
-      font-weight: 500;
+      font-size: 1rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: var(--transition);
-      letter-spacing: 0.02em;
+      transition: var(--transition-bounce);
+      letter-spacing: 0.03em;
       flex-shrink: 0;
+      box-shadow: 0 4px 16px var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Button stitch effect */
+    .btn-new-project::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 8px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow:
+        -12px 0 0 rgba(255, 255, 255, 0.2),
+        12px 0 0 rgba(255, 255, 255, 0.2);
     }
 
     .btn-new-project:hover {
       background: var(--terracotta-light);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(193, 123, 99, 0.3);
+      border-color: var(--terracotta);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 8px 24px rgba(193, 123, 99, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-new-project:active {
+      transform: translateY(-1px) scale(0.98);
     }
 
     .header.scrolled .btn-new-project {
@@ -166,11 +217,15 @@ export class AppHeader extends LitElement {
       }
 
       .logo {
-        font-size: 2.25rem;
+        font-size: 3rem;
       }
 
       .header.scrolled .logo {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
+      }
+
+      .tagline {
+        font-size: 1rem;
       }
     }
 
@@ -185,6 +240,14 @@ export class AppHeader extends LitElement {
         flex-direction: row;
         align-items: center;
         gap: 0.75rem;
+      }
+
+      .logo {
+        font-size: 2.5rem;
+      }
+
+      .header.scrolled .logo {
+        font-size: 1.1rem;
       }
 
       .btn-new-project {
@@ -218,8 +281,17 @@ export class AppHeader extends LitElement {
             </button>
           </div>
           <p class="tagline">Nähprojekt-Tagebuch</p>
-          <div class="stitch-decoration" aria-hidden="true"></div>
-          <stats-bar .stats=${this.stats} ?compact=${this.scrolled}></stats-bar>
+          <div class="stitch-decoration" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="12" cy="12" r="3" fill="currentColor"/>
+              <line x1="12" y1="4" x2="12" y2="8" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="12" y1="16" x2="12" y2="20" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="stats-wrapper">
+            <stats-bar .stats=${this.stats}></stats-bar>
+          </div>
         </div>
       </header>
     `;

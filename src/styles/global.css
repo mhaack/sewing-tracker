@@ -1,37 +1,51 @@
 :root {
   --cream: #faf8f5;
   --cream-dark: #f2efe8;
+  --cream-darker: #ede9de;
   --sand: #e8e3d8;
   --terracotta: #c17b63;
   --terracotta-light: #d99a85;
+  --terracotta-rich: #a85d44;
   --sage: #9db19d;
   --sage-dark: #7a9379;
+  --sage-vibrant: #6b9a6b;
   --rose: #b67a7f;
+  --rose-deep: #9d5a60;
   --charcoal: #2d2d2d;
   --charcoal-light: #4a4a4a;
-  --shadow: rgba(45, 45, 45, 0.08);
-  --shadow-strong: rgba(45, 45, 45, 0.15);
 
-  /* Status colors — harmonized with warm palette */
-  --status-fertig: #7a9379;
-  --status-fertig-bg: #e8f0e8;
-  --status-fertig-text: #3d5a3d;
+  /* Enhanced shadows for depth */
+  --shadow: rgba(45, 45, 45, 0.12);
+  --shadow-strong: rgba(45, 45, 45, 0.25);
+  --shadow-dramatic: rgba(45, 45, 45, 0.35);
+  --shadow-soft: rgba(193, 123, 99, 0.15);
+
+  /* Status colors — more vibrant and distinctive */
+  --status-fertig: #6b9a6b;
+  --status-fertig-bg: #e3f2e3;
+  --status-fertig-text: #2d5a2d;
   --status-in-bearbeitung: #d4a87c;
   --status-in-bearbeitung-bg: #faf0e4;
   --status-in-bearbeitung-text: #6b4d2e;
-  --status-geplant: #8fafc2;
-  --status-geplant-bg: #e4eef5;
-  --status-geplant-text: #3a5a6e;
+  --status-geplant: #7a9ec4;
+  --status-geplant-bg: #dfe9f5;
+  --status-geplant-text: #2d4a6e;
   --status-idee: #b5a0c4;
   --status-idee-bg: #f0eaf5;
   --status-idee-text: #5a4069;
 
   --font-display: 'Cormorant Garamond', serif;
   --font-body: 'Outfit', sans-serif;
+  --font-accent: 'Dancing Script', cursive;
 
-  --radius: 12px;
-  --radius-sm: 8px;
+  --radius: 16px;
+  --radius-sm: 10px;
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* Fabric texture pattern */
+  --texture-grid: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(45, 45, 45, 0.018) 1px, rgba(45, 45, 45, 0.018) 2px),
+                  repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(45, 45, 45, 0.018) 1px, rgba(45, 45, 45, 0.018) 2px);
 }
 
 * {
@@ -42,7 +56,11 @@
 
 body {
   font-family: var(--font-body);
-  background: var(--cream);
+  background:
+    var(--texture-grid),
+    linear-gradient(135deg, #faf8f5 0%, #f2efe8 45%, #ede9de 100%);
+  background-size: 24px 24px, 100% 100%;
+  background-attachment: fixed, fixed;
   color: var(--charcoal);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
