@@ -21,13 +21,13 @@ export class AppShell extends LitElement {
     :host {
       display: block;
       min-height: 100vh;
-      background: linear-gradient(135deg, var(--cream) 0%, var(--cream-dark) 100%);
+      background: transparent;
     }
 
     .main {
       max-width: 1400px;
       margin: 0 auto;
-      padding: 2.5rem 2rem;
+      padding: 3rem 2.5rem;
     }
 
     .view-controls {

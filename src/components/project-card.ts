@@ -13,48 +13,76 @@ export class ProjectCard extends LitElement {
     statusBadgeStyles,
     css`
       .project-card {
-        background: white;
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85)),
+          white;
         border-radius: var(--radius);
-        padding: 1rem 1.5rem 1.5rem;
-        box-shadow: 0 4px 20px var(--shadow), 0 0 0 1px var(--sand);
-        transition: var(--transition);
-        animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+        padding: 1.75rem 2.25rem 2rem;
+        box-shadow:
+          0 8px 32px var(--shadow),
+          0 0 0 2px rgba(232, 227, 216, 0.5),
+          inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        animation: fadeInUp 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55) backwards;
         position: relative;
         overflow: hidden;
         display: flex;
         flex-direction: column;
+        border: 2px solid transparent;
       }
 
       @keyframes fadeInUp {
         from {
           opacity: 0;
-          transform: translateY(30px);
+          transform: translateY(40px) scale(0.95) rotate(-2deg);
         }
         to {
           opacity: 1;
-          transform: translateY(0);
+          transform: translateY(0) scale(1) rotate(0deg);
         }
       }
 
-      /* Status-colored accent stripe — always visible */
+      /* Fabric ribbon accent stripe */
       .project-card::before {
         content: '';
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
-        height: 4px;
-        background: var(--status-accent, var(--sand));
-        transition: height 0.3s ease;
+        height: 8px;
+        background: linear-gradient(135deg, var(--status-accent, var(--sand)), color-mix(in srgb, var(--status-accent, var(--sand)) 70%, white));
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        transition: height 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      /* Stitching detail */
+      .project-card::after {
+        content: '';
+        position: absolute;
+        top: 12px;
+        left: 1.5rem;
+        right: 1.5rem;
+        height: 1px;
+        border-top: 1.5px dashed rgba(0, 0, 0, 0.08);
+        transition: opacity 0.3s ease;
       }
 
       .project-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 40px var(--shadow-strong), 0 0 0 1px var(--sage);
+        transform: translateY(-6px) rotate(0.5deg);
+        box-shadow:
+          0 16px 48px var(--shadow-dramatic),
+          0 0 0 2px var(--sage-vibrant),
+          inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        border-color: rgba(157, 177, 157, 0.3);
       }
 
       .project-card:hover::before {
-        height: 5px;
+        height: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      }
+
+      .project-card:hover::after {
+        opacity: 0.5;
       }
 
       .project-header {
@@ -64,37 +92,39 @@ export class ProjectCard extends LitElement {
 
       .project-name {
         font-family: var(--font-display);
-        font-size: 1.75rem;
-        font-weight: 500;
+        font-size: 2.25rem;
+        font-weight: 600;
         color: var(--charcoal);
-        line-height: 1.2;
-        letter-spacing: 0.01em;
+        line-height: 1.15;
+        letter-spacing: 0.02em;
         margin-top: 0;
         margin-bottom: 0;
         word-wrap: break-word;
         overflow-wrap: break-word;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
       }
 
       .project-meta-line {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 0.5rem;
+        gap: 0.75rem;
         flex-wrap: wrap;
-        margin-bottom: 0.75rem;
+        margin-bottom: 1rem;
       }
 
       .project-meta-content {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.75rem;
         flex-wrap: wrap;
       }
 
       .project-date {
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         color: var(--charcoal-light);
-        font-weight: 400;
+        font-weight: 500;
+        letter-spacing: 0.02em;
       }
 
       .meta-separator {
@@ -122,46 +152,88 @@ export class ProjectCard extends LitElement {
       }
 
       .btn-icon {
-        background: var(--cream);
-        border: 1px solid var(--sand);
-        width: 34px;
-        height: 34px;
+        background: white;
+        border: 2px solid var(--sand);
+        width: 38px;
+        height: 38px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: var(--transition);
+        transition: var(--transition-bounce);
         color: var(--charcoal-light);
         text-decoration: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        position: relative;
+      }
+
+      /* Button stitch holes */
+      .btn-icon::before,
+      .btn-icon::after {
+        content: '';
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        background: currentColor;
+        border-radius: 50%;
+        opacity: 0.15;
+      }
+
+      .btn-icon::before {
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .btn-icon::after {
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
       }
 
       .btn-icon svg {
-        width: 16px;
-        height: 16px;
+        width: 18px;
+        height: 18px;
         stroke-width: 2;
       }
 
       .btn-icon:hover {
-        background: var(--sage);
+        background: var(--sage-vibrant);
         color: white;
-        border-color: var(--sage);
-        transform: scale(1.1);
+        border-color: var(--sage-dark);
+        transform: scale(1.15) rotate(10deg);
+        box-shadow: 0 4px 16px rgba(107, 154, 107, 0.3);
+      }
+
+      .btn-icon:hover::before,
+      .btn-icon:hover::after {
+        opacity: 0.25;
       }
 
       .btn-delete:hover {
-        background: var(--rose);
+        background: var(--rose-deep);
         border-color: var(--rose);
+        box-shadow: 0 4px 16px rgba(157, 90, 96, 0.3);
       }
 
       .fabric-badge {
         background: white;
         color: var(--charcoal);
-        padding: 0.35rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        border: 1px solid var(--sand);
-        font-weight: 400;
+        padding: 0.45rem 0.9rem;
+        border-radius: 24px;
+        font-size: 0.8rem;
+        border: 2px solid var(--sand);
+        font-weight: 500;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        transition: var(--transition);
+        letter-spacing: 0.01em;
+      }
+
+      .fabric-badge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        border-color: var(--sage);
       }
 
       .detail-fabrics {
@@ -173,12 +245,16 @@ export class ProjectCard extends LitElement {
       .project-details {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-        gap: 1rem;
-        padding: 1rem;
-        background: var(--cream);
+        gap: 1.25rem;
+        padding: 1.5rem 1.75rem;
+        background:
+          linear-gradient(135deg, rgba(250, 248, 245, 0.8), rgba(242, 239, 232, 0.6)),
+          repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(193, 123, 99, 0.02) 3px, rgba(193, 123, 99, 0.02) 6px);
         border-radius: var(--radius-sm);
         align-content: start;
         margin-top: auto;
+        border: 1.5px solid rgba(232, 227, 216, 0.6);
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
       }
 
       .detail.full-width {
@@ -210,23 +286,24 @@ export class ProjectCard extends LitElement {
       }
 
       .detail-label {
-        font-size: 0.65rem;
+        font-size: 0.7rem;
         color: var(--charcoal-light);
         text-transform: uppercase;
-        letter-spacing: 0.06em;
-        font-weight: 400;
+        letter-spacing: 0.08em;
+        font-weight: 600;
       }
 
       .detail-value {
         font-family: var(--font-display);
-        font-size: 1.15rem;
-        font-weight: 500;
+        font-size: 1.35rem;
+        font-weight: 600;
         color: var(--charcoal);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
       }
 
       .detail-text {
         font-family: var(--font-display);
-        font-size: 1.15rem;
+        font-size: 1.25rem;
         font-weight: 500;
         color: var(--charcoal);
         word-wrap: break-word;
