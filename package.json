@@ -1,0 +1,29 @@
+{
+  "name": "sewing-tracker",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "sewing",
+    "tracker",
+    "supabase",
+    "typescript"
+  ],
+  "author": "",
+  "license": "ISC",
+  "description": "A sewing project tracker with Supabase backend",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.48.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.1",
+    "lit": "^3.3.2",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
+  }
+}
