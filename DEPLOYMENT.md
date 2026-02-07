@@ -47,10 +47,10 @@ netlify deploy --prod
 1. In Netlify, go to: **Site settings** → **Environment variables**
 2. Add the following variables:
 
-   - **Variable**: `VITE_SUPABASE_URL`  
+   - **Variable**: `SUPABASE_URL`  
      **Value**: Your Supabase project URL (e.g., `https://xxxxx.supabase.co`)
    
-   - **Variable**: `VITE_SUPABASE_ANON_KEY`  
+   - **Variable**: `SUPABASE_ANON_KEY`  
      **Value**: Your Supabase Anon/Public Key
 
 3. Save the changes
@@ -64,8 +64,8 @@ You can find your Supabase credentials in your Supabase dashboard:
 2. Select your project
 3. Go to **Settings** → **API**
 4. Copy:
-   - **Project URL** → this is your `VITE_SUPABASE_URL`
-   - **anon/public key** → this is your `VITE_SUPABASE_ANON_KEY`
+   - **Project URL** → this is your `SUPABASE_URL`
+   - **anon/public key** → this is your `SUPABASE_ANON_KEY`
 
 ## Step 5: Initialize Database
 

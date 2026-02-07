@@ -222,9 +222,9 @@ Required variables in `.env`:
 SUPABASE_URL=https://xxxxx.supabase.co
 SUPABASE_ANON_KEY=eyJxxx...
 
-# For Vite-based apps, prefix with VITE_:
-VITE_SUPABASE_URL=https://xxxxx.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJxxx...
+# Environment variables for Supabase connection:
+SUPABASE_URL=https://xxxxx.supabase.co
+SUPABASE_ANON_KEY=eyJxxx...
 ```
 
 The `supabase.ts` client supports both naming conventions.

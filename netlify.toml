@@ -14,5 +14,5 @@
   status = 200
 
 # Environment variables (set these in Netlify UI)
-# VITE_SUPABASE_URL=your-supabase-url
-# VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+# SUPABASE_URL=your-supabase-url
+# SUPABASE_ANON_KEY=your-supabase-anon-key
