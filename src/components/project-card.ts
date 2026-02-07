@@ -1,257 +1,240 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Project } from '../types/project';
+import { statusBadgeStyles } from '../styles/shared-styles';
+import { getStatusStyle, getStatusAccentColor } from '../utils/status';
 
 @customElement('project-card')
 export class ProjectCard extends LitElement {
   @property({ type: Object }) project!: Project;
   @property({ type: Number }) index = 0;
 
-  static styles = css`
-    .project-card {
-      background: white;
-      border-radius: var(--radius);
-      padding: 1rem 1.5rem 1.5rem;
-      box-shadow: 0 4px 20px var(--shadow), 0 0 0 1px var(--sand);
-      transition: var(--transition);
-      animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) backwards;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
+  static styles = [
+    statusBadgeStyles,
+    css`
+      .project-card {
+        background: white;
+        border-radius: var(--radius);
+        padding: 1rem 1.5rem 1.5rem;
+        box-shadow: 0 4px 20px var(--shadow), 0 0 0 1px var(--sand);
+        transition: var(--transition);
+        animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
       }
-      to {
-        opacity: 1;
-        transform: translateY(0);
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
-    }
 
-    .project-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, var(--terracotta), var(--rose), var(--sage));
-      opacity: 0;
-      transition: var(--transition);
-    }
+      /* Status-colored accent stripe — always visible */
+      .project-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--status-accent, var(--sand));
+        transition: height 0.3s ease;
+      }
 
-    .project-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 40px var(--shadow-strong), 0 0 0 1px var(--sage);
-    }
+      .project-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px var(--shadow-strong), 0 0 0 1px var(--sage);
+      }
 
-    .project-card:hover::before {
-      opacity: 1;
-    }
+      .project-card:hover::before {
+        height: 5px;
+      }
 
-    .project-header {
-      margin-top: 0;
-      margin-bottom: 0.5rem;
-    }
+      .project-header {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+      }
 
-    .project-name {
-      font-family: var(--font-display);
-      font-size: 1.75rem;
-      font-weight: 500;
-      color: var(--charcoal);
-      line-height: 1.2;
-      letter-spacing: 0.01em;
-      margin-top: 0;
-      margin-bottom: 0;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-    }
+      .project-name {
+        font-family: var(--font-display);
+        font-size: 1.75rem;
+        font-weight: 500;
+        color: var(--charcoal);
+        line-height: 1.2;
+        letter-spacing: 0.01em;
+        margin-top: 0;
+        margin-bottom: 0;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
 
-    .project-meta-line {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-bottom: 0.5rem;
-    }
+      .project-meta-line {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.75rem;
+      }
 
-    .project-meta-content {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
+      .project-meta-content {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
 
-    .project-date {
-      font-size: 0.85rem;
-      color: var(--charcoal-light);
-      font-weight: 400;
-    }
+      .project-date {
+        font-size: 0.85rem;
+        color: var(--charcoal-light);
+        font-weight: 400;
+      }
 
-    .meta-separator {
-      font-size: 0.85rem;
-      color: var(--charcoal-light);
-    }
+      .meta-separator {
+        font-size: 0.85rem;
+        color: var(--charcoal-light);
+      }
 
-    .project-actions {
-      display: flex;
-      gap: 0.5rem;
-      flex-shrink: 0;
-      margin-left: auto;
-    }
+      /* Action buttons — subtle by default, visible on hover (desktop) */
+      .project-actions {
+        display: flex;
+        gap: 0.4rem;
+        flex-shrink: 0;
+        margin-left: auto;
+        transition: opacity 0.2s ease;
+      }
 
-    .btn-icon {
-      background: var(--cream);
-      border: 1px solid var(--sand);
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: var(--transition);
-      color: var(--charcoal-light);
-      text-decoration: none;
-    }
+      @media (hover: hover) {
+        .project-actions {
+          opacity: 0.4;
+        }
 
-    .btn-icon svg {
-      width: 18px;
-      height: 18px;
-      stroke-width: 2;
-    }
+        .project-card:hover .project-actions {
+          opacity: 1;
+        }
+      }
 
-    .btn-icon:hover {
-      background: var(--sage);
-      color: white;
-      border-color: var(--sage);
-      transform: scale(1.1);
-    }
+      .btn-icon {
+        background: var(--cream);
+        border: 1px solid var(--sand);
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: var(--transition);
+        color: var(--charcoal-light);
+        text-decoration: none;
+      }
 
-    .btn-delete:hover {
-      background: var(--rose);
-      border-color: var(--rose);
-    }
+      .btn-icon svg {
+        width: 16px;
+        height: 16px;
+        stroke-width: 2;
+      }
 
-    .fabric-badge {
-      background: white;
-      color: var(--charcoal);
-      padding: 0.4rem 0.9rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      border: 1px solid var(--sand);
-      font-weight: 400;
-    }
+      .btn-icon:hover {
+        background: var(--sage);
+        color: white;
+        border-color: var(--sage);
+        transform: scale(1.1);
+      }
 
-    .detail-fabrics {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-    }
+      .btn-delete:hover {
+        background: var(--rose);
+        border-color: var(--rose);
+      }
 
-    .project-details {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      gap: 1rem;
-      padding: 1rem;
-      background: var(--cream);
-      border-radius: var(--radius-sm);
-      align-content: start;
-      margin-top: auto;
-    }
+      .fabric-badge {
+        background: white;
+        color: var(--charcoal);
+        padding: 0.35rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        border: 1px solid var(--sand);
+        font-weight: 400;
+      }
 
-    .detail.full-width {
-      grid-column: 1 / -1;
-    }
+      .detail-fabrics {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+      }
 
-    .detail {
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-    }
+      .project-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 1rem;
+        padding: 1rem;
+        background: var(--cream);
+        border-radius: var(--radius-sm);
+        align-content: start;
+        margin-top: auto;
+      }
 
-    .detail-header {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
+      .detail.full-width {
+        grid-column: 1 / -1;
+      }
 
-    .detail-fabrics {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      width: 100%;
-    }
+      .detail {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
 
-    .detail-icon {
-      font-size: 1rem;
-      flex-shrink: 0;
-    }
+      .detail-header {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
 
-    .detail-label {
-      font-size: 0.65rem;
-      color: var(--charcoal-light);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      font-weight: 400;
-    }
+      .detail-icon {
+        flex-shrink: 0;
+        color: var(--charcoal-light);
+        opacity: 0.6;
+      }
 
-    .detail-value {
-      font-family: var(--font-display);
-      font-size: 1.15rem;
-      font-weight: 500;
-      color: var(--charcoal);
-    }
+      .detail-icon svg {
+        width: 14px;
+        height: 14px;
+        display: block;
+      }
 
-    .detail-text {
-      font-family: var(--font-display);
-      font-size: 1.15rem;
-      font-weight: 500;
-      color: var(--charcoal);
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-      line-height: 1.3;
-    }
+      .detail-label {
+        font-size: 0.65rem;
+        color: var(--charcoal-light);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-weight: 400;
+      }
 
+      .detail-value {
+        font-family: var(--font-display);
+        font-size: 1.15rem;
+        font-weight: 500;
+        color: var(--charcoal);
+      }
 
-    .status-badge {
-      display: inline-block;
-      padding: 0.3rem 0.7rem;
-      border-radius: 16px;
-      font-size: 0.75rem;
-      font-weight: 400;
-      line-height: 1.2;
-    }
-
-    .status-in-bearbeitung {
-      background: #ffd700;
-      color: #333;
-    }
-
-    .status-fertig {
-      background: #90EE90;
-      color: #333;
-    }
-
-    .status-idee {
-      background: #E6E6FA;
-      color: #333;
-    }
-
-    .status-geplant-für-sommer,
-    .status-geplant-für-winter,
-    .status-geplant-für-frühling,
-    .status-geplant-für-herbst {
-      background: #87CEEB;
-      color: #333;
-    }
-
-  `;
+      .detail-text {
+        font-family: var(--font-display);
+        font-size: 1.15rem;
+        font-weight: 500;
+        color: var(--charcoal);
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        line-height: 1.3;
+      }
+    `,
+  ];
 
   private handleEdit() {
     this.dispatchEvent(new CustomEvent('edit-project', {
@@ -294,8 +277,13 @@ export class ProjectCard extends LitElement {
         })
       : null;
 
+    const isComplete = project.status?.toLowerCase() === 'fertig';
+
     return html`
-      <div class="project-card" style="animation-delay: ${this.index * 0.05}s">
+      <div
+        class="project-card"
+        style="--status-accent: ${getStatusAccentColor(project.status)}; animation-delay: ${this.index * 0.05}s"
+      >
         <div class="project-header">
           <h3 class="project-name">${project.name}</h3>
         </div>
@@ -310,7 +298,10 @@ export class ProjectCard extends LitElement {
                 <span class="meta-separator">—</span>
               ` : ''}
               ${project.status ? html`
-                <span class="status-badge status-${project.status.toLowerCase().replace(/\s+/g, '-')}">${project.status}</span>
+                <span
+                  class="status-badge ${isComplete ? 'status-complete' : ''}"
+                  style="${getStatusStyle(project.status)}"
+                >${project.status}</span>
               ` : ''}
             </div>
             <div class="project-actions">
@@ -391,7 +382,7 @@ export class ProjectCard extends LitElement {
             ${project.moneySpent ? html`
               <div class="detail">
                 <div class="detail-header">
-                  <span class="detail-icon">💰</span>
+                  <span class="detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg></span>
                   <span class="detail-label">Kosten</span>
                 </div>
                 <span class="detail-value">${project.moneySpent.toFixed(2)}€</span>
@@ -400,7 +391,7 @@ export class ProjectCard extends LitElement {
             ${project.fabricUsed ? html`
               <div class="detail">
                 <div class="detail-header">
-                  <span class="detail-icon">📏</span>
+                  <span class="detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0z"/><path d="m14.5 12.5 2-2m-5-1 2-2m-5-1 2-2"/></svg></span>
                   <span class="detail-label">Stoff</span>
                 </div>
                 <span class="detail-value">${project.fabricUsed.toFixed(1)}m</span>
@@ -409,7 +400,7 @@ export class ProjectCard extends LitElement {
             ${project.timeSpent ? html`
               <div class="detail">
                 <div class="detail-header">
-                  <span class="detail-icon">⏱️</span>
+                  <span class="detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
                   <span class="detail-label">Zeit</span>
                 </div>
                 <span class="detail-value">${timeDisplay}</span>
@@ -418,7 +409,7 @@ export class ProjectCard extends LitElement {
             ${project.patternBrand ? html`
               <div class="detail">
                 <div class="detail-header">
-                  <span class="detail-icon">📐</span>
+                  <span class="detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg></span>
                   <span class="detail-label">Schnitt</span>
                 </div>
                 <span class="detail-text">${project.patternBrand}</span>
@@ -427,7 +418,7 @@ export class ProjectCard extends LitElement {
             ${project.purchasedFrom ? html`
               <div class="detail">
                 <div class="detail-header">
-                  <span class="detail-icon">🛒</span>
+                  <span class="detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span>
                   <span class="detail-label">Gekauft bei</span>
                 </div>
                 <span class="detail-text">${project.purchasedFrom}</span>
@@ -436,7 +427,7 @@ export class ProjectCard extends LitElement {
             ${project.fabrics.length > 0 ? html`
               <div class="detail full-width">
                 <div class="detail-header">
-                  <span class="detail-icon">🧵</span>
+                  <span class="detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1.27a2 2 0 0 1-3.46 0H6.73a2 2 0 0 1-3.46 0H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/></svg></span>
                   <span class="detail-label">Stoffe</span>
                 </div>
                 <div class="detail-fabrics">

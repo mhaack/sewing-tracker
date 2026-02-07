@@ -1,6 +1,8 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Project } from '../types/project';
+import { statusBadgeStyles } from '../styles/shared-styles';
+import { getStatusStyle, getStatusAccentColor } from '../utils/status';
 import './project-card';
 
 @customElement('project-list')
@@ -9,331 +11,280 @@ export class ProjectList extends LitElement {
   @property({ type: String }) viewMode: 'cards' | 'list' = 'cards';
   @property({ type: String }) sortMode: 'name' | 'date-desc' | 'date-asc' = 'date-desc';
 
-  static styles = css`
-    .projects-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-      align-items: start;
-    }
-
-    @media (min-width: 768px) {
+  static styles = [
+    statusBadgeStyles,
+    css`
       .projects-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (min-width: 1200px) {
-      .projects-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
-    .projects-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .list-header {
-      display: grid;
-      grid-template-columns: 3fr 2fr 130px 130px 130px 140px;
-      gap: 1rem;
-      padding: 0.75rem 1.5rem;
-      font-size: 0.7rem;
-      font-weight: 500;
-      color: var(--charcoal-light);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      border-bottom: 1px solid var(--sand);
-      margin-bottom: 0.5rem;
-    }
-
-    .list-header-col {
-      text-align: left;
-    }
-
-    .list-header-col.align-right {
-      text-align: right;
-    }
-
-    .list-item {
-      background: white;
-      border-radius: var(--radius-sm);
-      padding: 1rem 1.5rem;
-      box-shadow: 0 2px 8px var(--shadow);
-      display: grid;
-      grid-template-columns: 3fr 2fr 130px 130px 130px 140px;
-      gap: 1rem;
-      align-items: center;
-      transition: var(--transition);
-      border-left: 4px solid transparent;
-    }
-
-    .list-item:hover {
-      box-shadow: 0 4px 16px var(--shadow-strong);
-      border-left-color: var(--sage);
-      transform: translateX(4px);
-    }
-
-    .list-item-content {
-      display: contents;
-    }
-
-    .list-item-name {
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-    }
-
-    .list-item-title {
-      font-family: var(--font-display);
-      font-size: 1.25rem;
-      font-weight: 500;
-      color: var(--charcoal);
-    }
-
-    .list-item-meta {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .list-item-date {
-      font-size: 0.8rem;
-      color: var(--charcoal-light);
-    }
-
-    .list-item-fabrics {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.35rem;
-    }
-
-    .list-fabric-tag {
-      background: var(--cream-dark);
-      color: var(--charcoal);
-      padding: 0.25rem 0.6rem;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      border: 1px solid var(--sand);
-    }
-
-    .list-item-stat {
-      text-align: right;
-      font-family: var(--font-display);
-      font-size: 1rem;
-      font-weight: 500;
-      color: var(--charcoal);
-    }
-
-    .list-stat-value {
-      font-family: var(--font-display);
-      font-size: 1rem;
-      font-weight: 500;
-      color: var(--charcoal);
-      white-space: nowrap;
-    }
-
-    .list-stat-label {
-      display: none;
-    }
-
-    .list-item-actions {
-      display: flex;
-      gap: 0.5rem;
-      justify-content: flex-end;
-    }
-
-    .list-btn {
-      background: var(--cream);
-      border: 1px solid var(--sand);
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: var(--transition);
-      color: var(--charcoal-light);
-    }
-
-    .list-btn svg {
-      width: 16px;
-      height: 16px;
-      stroke-width: 2;
-    }
-
-    .list-btn:hover {
-      background: var(--sage);
-      color: white;
-      border-color: var(--sage);
-    }
-
-    .list-btn.delete:hover {
-      background: var(--rose);
-      border-color: var(--rose);
-    }
-
-    .list-status-badge {
-      font-size: 0.8rem;
-      color: var(--charcoal-light);
-    }
-    
-    .list-meta-separator {
-      font-size: 0.8rem;
-      color: var(--charcoal-light);
-    }
-
-    .list-status-empty {
-      color: var(--charcoal-light);
-      font-size: 0.85rem;
-    }
-
-    .empty-state {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 4rem 2rem;
-      color: var(--charcoal-light);
-    }
-
-    .empty-icon {
-      width: 80px;
-      height: 80px;
-      margin: 0 auto 1.5rem;
-      opacity: 0.3;
-      stroke-width: 1.5;
-    }
-
-    .empty-state h3 {
-      font-family: var(--font-display);
-      font-size: 1.75rem;
-      font-weight: 500;
-      color: var(--charcoal);
-      margin-bottom: 0.5rem;
-    }
-
-    .empty-state p {
-      font-size: 1rem;
-      max-width: 400px;
-      margin: 0 auto;
-    }
-
-    @media (max-width: 1200px) {
-      .list-header {
-        grid-template-columns: 2.5fr 1.5fr 90px 90px 90px 120px;
-        gap: 0.75rem;
-      }
-
-      .list-item {
-        grid-template-columns: 2.5fr 1.5fr 90px 90px 90px 120px;
-        gap: 0.75rem;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .projects-grid {
+        display: grid;
         grid-template-columns: 1fr;
         gap: 1.5rem;
+        align-items: start;
+      }
+
+      @media (min-width: 768px) {
+        .projects-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (min-width: 1200px) {
+        .projects-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      /* ── List view ── */
+
+      .projects-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
       }
 
       .list-header {
-        grid-template-columns: 2fr 1fr auto;
-        gap: 0.5rem;
-        padding: 0.5rem 0.75rem;
-      }
-
-      .list-header-col:nth-child(2),
-      .list-header-col:nth-child(4),
-      .list-header-col:nth-child(5) {
-        display: none;
-      }
-
-      .list-header-col:nth-child(3) {
-        display: block;
-        text-align: left;
-        font-size: 0;
-      }
-
-      .list-header-col:nth-child(3)::before {
-        content: '€ / Meter / Zeit';
+        display: grid;
+        grid-template-columns: 3fr 2fr 1fr 140px;
+        gap: 1rem;
+        padding: 0.75rem 1.5rem;
         font-size: 0.7rem;
+        font-weight: 500;
+        color: var(--charcoal-light);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid var(--sand);
+        margin-bottom: 0.5rem;
       }
 
-      .list-header-col:last-child {
-        text-align: center;
+      .list-header-col {
+        text-align: left;
       }
 
-      .list-header-col:last-child::after {
-        content: 'Aktionen';
+      .list-header-col.align-right {
+        text-align: right;
       }
 
       .list-item {
+        background: white;
+        border-radius: var(--radius-sm);
+        padding: 1.1rem 1.5rem;
+        box-shadow: 0 2px 8px var(--shadow);
         display: grid;
-        grid-template-columns: 2fr 1fr auto;
-        grid-template-rows: auto auto auto;
-        gap: 0.5rem;
-        align-items: start;
-        padding: 0.75rem;
+        grid-template-columns: 3fr 2fr 1fr 140px;
+        gap: 1rem;
+        align-items: center;
+        transition: var(--transition);
+        border-left: 4px solid var(--list-accent, transparent);
+      }
+
+      .list-item:hover {
+        box-shadow: 0 4px 16px var(--shadow-strong);
+        border-left-color: var(--list-accent, var(--sage));
+        transform: translateX(4px);
+      }
+
+      .list-item-content {
+        display: contents;
       }
 
       .list-item-name {
-        grid-column: 1;
-        grid-row: 1 / 4;
-        align-self: start;
-      }
-
-      .list-item-title {
-        font-size: 1.1rem;
-        margin-bottom: 0.25rem;
-      }
-
-      .list-item-meta {
-        font-size: 0.75rem;
-      }
-
-      .list-item-fabrics {
-        display: none;
-      }
-
-      .list-item-stat {
-        grid-column: 2;
-        text-align: left;
-        font-size: 0.95rem;
-        padding: 0;
-        line-height: 1.6;
-      }
-
-      .stat-price {
-        grid-row: 1;
-      }
-
-      .stat-fabric {
-        grid-row: 2;
-      }
-
-      .stat-time {
-        grid-row: 3;
-      }
-
-      .list-item-actions {
-        grid-column: 3;
-        grid-row: 1 / 4;
         display: flex;
         flex-direction: column;
         gap: 0.35rem;
-        justify-content: flex-start;
-        align-self: start;
+      }
+
+      /* Typography: use body font for list titles at smaller sizes */
+      .list-item-title {
+        font-family: var(--font-body);
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: var(--charcoal);
+        line-height: 1.3;
+      }
+
+      .list-item-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .list-item-date {
+        font-size: 0.8rem;
+        color: var(--charcoal-light);
+      }
+
+      .list-item-fabrics {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+      }
+
+      .list-fabric-tag {
+        background: var(--cream-dark);
+        color: var(--charcoal);
+        padding: 0.25rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        border: 1px solid var(--sand);
+      }
+
+      .list-item-details {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-family: var(--font-display);
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--charcoal);
+        white-space: nowrap;
+        flex-wrap: wrap;
+      }
+
+      .list-detail-separator {
+        color: var(--sand);
+        font-weight: 300;
+        font-family: var(--font-body);
+        font-size: 0.85rem;
+      }
+
+      .list-item-actions {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
       }
 
       .list-btn {
+        background: var(--cream);
+        border: 1px solid var(--sand);
         width: 32px;
         height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: var(--transition);
+        color: var(--charcoal-light);
+        text-decoration: none;
       }
-    }
-  `;
+
+      .list-btn svg {
+        width: 16px;
+        height: 16px;
+        stroke-width: 2;
+      }
+
+      .list-btn:hover {
+        background: var(--sage);
+        color: white;
+        border-color: var(--sage);
+      }
+
+      .list-btn.delete:hover {
+        background: var(--rose);
+        border-color: var(--rose);
+      }
+
+      .list-meta-separator {
+        font-size: 0.8rem;
+        color: var(--charcoal-light);
+      }
+
+      .list-status-empty {
+        color: var(--charcoal-light);
+        font-size: 0.85rem;
+      }
+
+      /* ── Empty state ── */
+
+      .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 5rem 2rem;
+        color: var(--charcoal-light);
+      }
+
+      .empty-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        color: var(--terracotta);
+        opacity: 0.3;
+        stroke-width: 1.5;
+        animation: floatBob 3s ease-in-out infinite;
+      }
+
+      @keyframes floatBob {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+      }
+
+      .empty-state h3 {
+        font-family: var(--font-display);
+        font-size: 2rem;
+        font-weight: 500;
+        color: var(--charcoal);
+        margin-bottom: 0.75rem;
+      }
+
+      .empty-state p {
+        font-size: 1rem;
+        max-width: 400px;
+        margin: 0 auto;
+        line-height: 1.7;
+      }
+
+      /* ── Responsive: list view ── */
+
+      @media (max-width: 1200px) {
+        .list-header,
+        .list-item {
+          grid-template-columns: 2.5fr 1.5fr 1fr 120px;
+          gap: 0.75rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .projects-grid {
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+
+        /* Same as desktop but drop the Stoffe column */
+        .list-header,
+        .list-item {
+          grid-template-columns: 3fr 1fr 140px;
+          gap: 0.5rem;
+          padding: 0.75rem;
+        }
+
+        .list-header {
+          padding: 0.5rem 0.75rem;
+        }
+
+        /* Hide Stoffe column */
+        .list-header-col:nth-child(2) {
+          display: none;
+        }
+
+        .list-item-fabrics {
+          display: none;
+        }
+
+        .list-item-title {
+          font-size: 1rem;
+        }
+
+        .list-item-meta {
+          font-size: 0.75rem;
+        }
+
+        .list-item-details {
+          font-size: 0.9rem;
+        }
+      }
+    `,
+  ];
 
   private handleEdit(project: Project) {
     this.dispatchEvent(new CustomEvent('edit-project', {
@@ -359,14 +310,12 @@ export class ProjectList extends LitElement {
     if (this.sortMode === 'name') {
       return sorted.sort((a, b) => a.name.localeCompare(b.name, 'de-DE'));
     } else if (this.sortMode === 'date-desc') {
-      // Sort by date descending (newest first)
       return sorted.sort((a, b) => {
         const dateA = a.projectDate ? new Date(a.projectDate).getTime() : 0;
         const dateB = b.projectDate ? new Date(b.projectDate).getTime() : 0;
         return dateB - dateA;
       });
     } else {
-      // Sort by date ascending (oldest first)
       return sorted.sort((a, b) => {
         const dateA = a.projectDate ? new Date(a.projectDate).getTime() : 0;
         const dateB = b.projectDate ? new Date(b.projectDate).getTime() : 0;
@@ -383,10 +332,8 @@ export class ProjectList extends LitElement {
         <div class="list-header">
           <div class="list-header-col">Projekt</div>
           <div class="list-header-col">Stoffe</div>
-          <div class="list-header-col align-right">Kosten</div>
-          <div class="list-header-col align-right">Stoff</div>
-          <div class="list-header-col align-right">Zeit</div>
-          <div class="list-header-col"></div>
+          <div class="list-header-col">Details</div>
+          <div class="list-header-col align-right">Aktionen</div>
         </div>
         <div class="projects-list">
           ${sortedProjects.map(project => {
@@ -409,8 +356,10 @@ export class ProjectList extends LitElement {
               })
             : '';
 
+          const isComplete = project.status?.toLowerCase() === 'fertig';
+
           return html`
-            <div class="list-item">
+            <div class="list-item" style="--list-accent: ${getStatusAccentColor(project.status)}">
               <div class="list-item-name">
                 <div class="list-item-title">${project.name}</div>
                 ${dateDisplay || project.status ? html`
@@ -422,7 +371,10 @@ export class ProjectList extends LitElement {
                       <span class="list-meta-separator">—</span>
                     ` : ''}
                     ${project.status ? html`
-                      <span class="list-status-badge">${project.status}</span>
+                      <span
+                        class="status-badge ${isComplete ? 'status-complete' : ''}"
+                        style="${getStatusStyle(project.status)}"
+                      >${project.status}</span>
                     ` : ''}
                   </div>
                 ` : ''}
@@ -437,16 +389,12 @@ export class ProjectList extends LitElement {
                 ` : ''}
               </div>
 
-              <div class="list-item-stat stat-price">
-                ${project.moneySpent.toFixed(2)}€
-              </div>
-
-              <div class="list-item-stat stat-fabric">
-                ${project.fabricUsed.toFixed(1)}m
-              </div>
-
-              <div class="list-item-stat stat-time">
-                ${timeDisplay}
+              <div class="list-item-details">
+                <span>${project.moneySpent.toFixed(2)}€</span>
+                <span class="list-detail-separator">/</span>
+                <span>${project.fabricUsed.toFixed(1)}m</span>
+                <span class="list-detail-separator">/</span>
+                <span>${timeDisplay}</span>
               </div>
 
               <div class="list-item-actions">
@@ -512,10 +460,14 @@ export class ProjectList extends LitElement {
         <div class="${this.viewMode === 'cards' ? 'projects-grid' : 'projects-list'}">
           <div class="empty-state">
             <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+              <circle cx="6" cy="6" r="3"/>
+              <circle cx="6" cy="18" r="3"/>
+              <line x1="20" y1="4" x2="8.12" y2="15.88"/>
+              <line x1="14.47" y1="14.48" x2="20" y2="20"/>
+              <line x1="8.12" y1="8.12" x2="12" y2="12"/>
             </svg>
-            <h3>Noch keine Projekte</h3>
-            <p>Beginnen Sie mit der Verfolgung Ihrer Nähprojekte, indem Sie Ihren ersten Eintrag erstellen</p>
+            <h3>Dein Atelier wartet!</h3>
+            <p>Erstelle dein erstes Nähprojekt und beginne, deine kreativen Werke zu dokumentieren.</p>
           </div>
         </div>
       `;

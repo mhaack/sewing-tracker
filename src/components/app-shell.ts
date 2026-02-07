@@ -318,20 +318,6 @@ export class AppShell extends LitElement {
           <div class="loading">Projekte werden geladen...</div>
         ` : html`
           <div class="view-controls">
-            <div class="sort-controls">
-              <label class="sort-label" for="sort-select">Sortieren nach:</label>
-              <select 
-                id="sort-select"
-                class="sort-select"
-                .value=${this.sortMode}
-                @change=${this.handleSortChange}
-              >
-                <option value="date-desc">Neueste zuerst</option>
-                <option value="date-asc">Älteste zuerst</option>
-                <option value="name">Projektname</option>
-              </select>
-            </div>
-            
             <div class="view-toggle">
               <button
                 class="view-btn ${this.viewMode === 'cards' ? 'active' : ''}"
@@ -358,6 +344,20 @@ export class AppShell extends LitElement {
                 </svg>
                 Liste
               </button>
+            </div>
+
+            <div class="sort-controls">
+              <label class="sort-label" for="sort-select">Sortieren nach:</label>
+              <select 
+                id="sort-select"
+                class="sort-select"
+                .value=${this.sortMode}
+                @change=${this.handleSortChange}
+              >
+                <option value="date-desc">Neueste zuerst</option>
+                <option value="date-asc">Älteste zuerst</option>
+                <option value="name">Projektname</option>
+              </select>
             </div>
           </div>
 

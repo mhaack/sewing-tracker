@@ -8,9 +8,23 @@
   --sage-dark: #7a9379;
   --rose: #b67a7f;
   --charcoal: #2d2d2d;
-  --charcoal-light: #5a5a5a;
+  --charcoal-light: #4a4a4a;
   --shadow: rgba(45, 45, 45, 0.08);
   --shadow-strong: rgba(45, 45, 45, 0.15);
+
+  /* Status colors — harmonized with warm palette */
+  --status-fertig: #7a9379;
+  --status-fertig-bg: #e8f0e8;
+  --status-fertig-text: #3d5a3d;
+  --status-in-bearbeitung: #d4a87c;
+  --status-in-bearbeitung-bg: #faf0e4;
+  --status-in-bearbeitung-text: #6b4d2e;
+  --status-geplant: #8fafc2;
+  --status-geplant-bg: #e4eef5;
+  --status-geplant-text: #3a5a6e;
+  --status-idee: #b5a0c4;
+  --status-idee-bg: #f0eaf5;
+  --status-idee-text: #5a4069;
 
   --font-display: 'Cormorant Garamond', serif;
   --font-body: 'Outfit', sans-serif;
