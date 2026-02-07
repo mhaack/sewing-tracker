@@ -95,7 +95,7 @@ export async function createProject(projectData: ProjectData): Promise<ProjectDa
 
   const { data, error } = await supabase
     .from('projects')
-    .insert(insertData)
+    .insert(insertData as any)
     .select()
     .single();
 
@@ -104,7 +104,11 @@ export async function createProject(projectData: ProjectData): Promise<ProjectDa
     throw new Error(`Failed to create project: ${error.message}`);
   }
 
-  return toProjectData(data);
+  if (!data) {
+    throw new Error('No data returned from insert operation');
+  }
+
+  return toProjectData(data as Project);
 }
 
 /**
@@ -141,7 +145,7 @@ export async function updateProject(id: string, projectData: Partial<ProjectData
   // Always update the timestamp
   updateData.updated_at = new Date().toISOString();
 
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('projects')
     .update(updateData)
     .eq('id', id)
@@ -153,7 +157,11 @@ export async function updateProject(id: string, projectData: Partial<ProjectData
     throw new Error(`Failed to update project: ${error.message}`);
   }
 
-  return toProjectData(data);
+  if (!data) {
+    throw new Error('No data returned from update operation');
+  }
+
+  return toProjectData(data as Project);
 }
 
 /**
@@ -189,11 +197,13 @@ export async function getProjectStats(): Promise<{
     throw new Error(`Failed to fetch project stats: ${error.message}`);
   }
 
+  const projects = data as Array<{ money_spent: number; fabric_used: number; time_spent: number }>;
+
   return {
-    totalProjects: data.length,
-    totalSpent: data.reduce((sum, p) => sum + (p.money_spent || 0), 0),
-    totalFabric: data.reduce((sum, p) => sum + (p.fabric_used || 0), 0),
-    totalTime: data.reduce((sum, p) => sum + (p.time_spent || 0), 0),
+    totalProjects: projects.length,
+    totalSpent: projects.reduce((sum, p) => sum + (p.money_spent || 0), 0),
+    totalFabric: projects.reduce((sum, p) => sum + (p.fabric_used || 0), 0),
+    totalTime: projects.reduce((sum, p) => sum + (p.time_spent || 0), 0),
   };
 }
 

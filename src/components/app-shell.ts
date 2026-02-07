@@ -214,9 +214,9 @@ export class AppShell extends LitElement {
   private getTotalStats(): ProjectStats {
     return {
       totalProjects: this.projects.length,
-      totalSpent: this.projects.reduce((sum, p) => sum + (parseFloat(p.moneySpent) || 0), 0),
-      totalFabric: this.projects.reduce((sum, p) => sum + (parseFloat(p.fabricUsed) || 0), 0),
-      totalTime: this.projects.reduce((sum, p) => sum + (parseFloat(p.timeSpent) || 0), 0)
+      totalSpent: this.projects.reduce((sum, p) => sum + (p.moneySpent || 0), 0),
+      totalFabric: this.projects.reduce((sum, p) => sum + (p.fabricUsed || 0), 0),
+      totalTime: this.projects.reduce((sum, p) => sum + (p.timeSpent || 0), 0)
     };
   }
 
@@ -241,7 +241,7 @@ export class AppShell extends LitElement {
     const projectData = e.detail as ProjectData;
 
     try {
-      if (this.editingProject) {
+      if (this.editingProject && this.editingProject.id) {
         // Update existing project
         await updateProject(this.editingProject.id, projectData);
       } else {

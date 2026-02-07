@@ -3,6 +3,14 @@
  * These types are generated based on the database schema
  */
 
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
 export interface Database {
   public: {
     Tables: {
@@ -10,6 +18,7 @@ export interface Database {
         Row: Project;
         Insert: ProjectInsert;
         Update: ProjectUpdate;
+        Relationships: []
       };
     };
     Views: {
@@ -21,6 +30,9 @@ export interface Database {
     Enums: {
       [_ in never]: never;
     };
+    CompositeTypes: {
+      [_ in never]: never
+    }
   };
 }
 
