@@ -223,8 +223,9 @@ SUPABASE_URL=https://xxxxx.supabase.co
 SUPABASE_ANON_KEY=eyJxxx...
 
 # Environment variables for Supabase connection:
-SUPABASE_URL=https://xxxxx.supabase.co
-SUPABASE_ANON_KEY=eyJxxx...
+# VITE_ prefix is required for Vite to expose these to the browser
+VITE_SUPABASE_URL=https://xxxxx.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJxxx...
 ```
 
 The `supabase.ts` client supports both naming conventions.
