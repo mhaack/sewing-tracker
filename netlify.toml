@@ -13,3 +13,7 @@
   to = "/index.html"
   status = 200
 
+# Environment variables (set these in Netlify UI - Site settings → Environment variables)
+# IMPORTANT: VITE_ prefix is REQUIRED for Vite to expose these to the browser
+# VITE_SUPABASE_URL=your-supabase-url
+# VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
